@@ -255,6 +255,22 @@ if (isset($_GET["mssql"])) {
 				return $this->query("USE " . idf_escape($database));
 			}
 		}
+	} elseif (extension_loaded("pdo_sqlsrv")) {
+		class Min_DB extends Min_PDO {
+			var $extension = "PDO_SQLSRV";
+
+			function connect($server, $username, $password) {
+				global $adminer;
+				$db = $adminer->database();
+				$this->dsn('sqlsrv:Server=' . $server . '; Database=' . $db, $username, $password);
+				return true;
+			}
+
+			function select_db($database) {
+				// database selection is separated from the connection so dbname in DSN can't be used
+				return $this->query("USE " . idf_escape($database));
+			}
+		}
 	}
 
 
